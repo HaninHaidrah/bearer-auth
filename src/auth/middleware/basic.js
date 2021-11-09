@@ -5,14 +5,13 @@ const { users } = require('../models/index.js')
 
 module.exports = async (req, res, next) => {
 
-  if (!req.headers.authorization) { return _authError(); }
-
+  if (!req.headers.authorization) { next('Unauthorized User'); };
+  
   let basic = req.headers.authorization.split(' ')[1];
-  let [username, password] = base64.decode(basic).split(':');
-  console.log([password]);
+  let [username, pass] = base64.decode(basic).split(':');
 
   try {
-    req.user = await users.authenticateBasic(username, password)
+    req.user = await users.authenticateBasic(username, pass);
     next();
   } catch (e) {
     res.status(403).send('Invalid Login');
